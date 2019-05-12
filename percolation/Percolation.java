@@ -13,6 +13,7 @@ public class Percolation {
     private final WeightedQuickUnionUF weightedQuickUnion;
     private final boolean[] stateGrid;
     private int connected = 0 ;
+    private boolean percolates  = false;
 
     // create n-by-n stateGrid, with all sites blocked
     public Percolation(int n) {
@@ -40,18 +41,15 @@ public class Percolation {
             connected ++ ;
             stateGrid[getIndex(row, col) - 1] = true;
             checkNeighbor(row, col);
-            checkTopAndBottom(row, col);
+            checkTop(row, col);
+            percolates = checkPercolation();
         }
     }
 
-    private void checkTopAndBottom(int row, int col) {
+    private void checkTop(int row, int col) {
         if (row == 1) {
             weightedQuickUnion.union(TOP, getIndex(row, col));
         }
-
-        // if (row == N){
-        //     weightedQuickUnion.union(BOTTOM, getIndex(row, col));
-        // }
     }
 
     private void checkNeighbor(int row, int col) {
@@ -106,6 +104,10 @@ public class Percolation {
     }
     // does the system percolate?
     public boolean percolates() {
+        return percolates;
+    }
+
+    private boolean checkPercolation(){
         for (int i = 0; i < N ; i++) {
             if (isFull(N, i+1)){
                 return true;
