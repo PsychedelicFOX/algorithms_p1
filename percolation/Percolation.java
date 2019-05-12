@@ -49,9 +49,9 @@ public class Percolation {
             weightedQuickUnion.union(TOP, getIndex(row, col));
         }
 
-        if (row == N){
-            weightedQuickUnion.union(BOTTOM, getIndex(row, col));
-        }
+        // if (row == N){
+        //     weightedQuickUnion.union(BOTTOM, getIndex(row, col));
+        // }
     }
 
     private void checkNeighbor(int row, int col) {
@@ -106,7 +106,12 @@ public class Percolation {
     }
     // does the system percolate?
     public boolean percolates() {
-        return weightedQuickUnion.connected(TOP, BOTTOM);
+        for (int i = 0; i < N ; i++) {
+            if (isFull(N, i+1)){
+                return true;
+            }
+        }
+        return false;
     }
 
     private int getIndex(int row, int col) {
