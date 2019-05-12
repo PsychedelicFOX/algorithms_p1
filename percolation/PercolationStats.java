@@ -33,18 +33,16 @@ public class PercolationStats {
     }
 
     private double performTrial(int n) {
-        boolean[][] open = new boolean[n][n];
         Percolation percolation  = new Percolation(n);
         while (!percolation.percolates()){
             int col = StdRandom.uniform(1, n+1);
             int row = StdRandom.uniform(1, n+1);
 
-            if(open[row-1][col-1]){
+            if(percolation.isOpen(row, col)){
                 continue;
             }
 
             percolation.open(row, col);
-            open[row-1][col-1] = true;
         }
         return  percolation.numberOfOpenSites() / (1.0 * n * n) ;
     }
