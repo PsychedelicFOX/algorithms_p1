@@ -43,12 +43,21 @@ public class Percolation {
             checkNeighbor(row, col);
             checkTop(row, col);
             percolates = checkPercolation();
+            if (!percolates && isFull(row, col)){
+                checkBottom(row, col);
+            }
         }
     }
 
     private void checkTop(int row, int col) {
         if (row == 1) {
             weightedQuickUnion.union(TOP, getIndex(row, col));
+        }
+    }
+
+    private void checkBottom(int row, int col) {
+        if (row == N) {
+            weightedQuickUnion.union(BOTTOM, getIndex(row, col));
         }
     }
 
@@ -108,12 +117,7 @@ public class Percolation {
     }
 
     private boolean checkPercolation(){
-        for (int i = 0; i < N ; i++) {
-            if (isFull(N, i+1)){
-                return true;
-            }
-        }
-        return false;
+        return weightedQuickUnion.connected(TOP, BOTTOM);
     }
 
     private int getIndex(int row, int col) {
