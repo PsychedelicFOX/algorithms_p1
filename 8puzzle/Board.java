@@ -11,7 +11,6 @@ import java.util.List;
  */
 public class Board {
 
-    private final int[][] GOAL;
     private final int n;
     private final int[][] grid;
 
@@ -21,14 +20,11 @@ public class Board {
     public Board(int[][] blocks){
         this.n = blocks[0].length;
         this.grid = new int[n][n];
-        this.GOAL = new int[n][n];
         for (int i = 0; i < n; i++) {
             for (int j = 0; j < n; j++) {
                 this.grid[i][j] = blocks[i][j];
-                this.GOAL[i][j] = i * n +j +1;
             }
         }
-        GOAL[n-1][n-1] = 0;
     }
 
     // board dimension n
@@ -39,12 +35,12 @@ public class Board {
     public int hamming(){
         int count = 0;
 
-        for (int i = 0; i < GOAL.length; i++) {
-            for (int j = 0; j < GOAL[i].length; j ++){
-                if (GOAL[i][j] == 0){
+        for (int i = 0; i < n; i++) {
+            for (int j = 0; j < n; j ++){
+                if (grid[i][j] == 0){
                     continue;
                 }
-                if (GOAL[i][j] != grid[i][j]){
+                if (grid[i][j] != i * n +j +1){
                     count ++;
                 }
             }
@@ -91,20 +87,9 @@ public class Board {
     }
     // is this board the goal board?
     public boolean isGoal(){
-
-        return Arrays.deepEquals(this.grid, GOAL);
+        return hamming() == 0;
     }
 
-    private int[][] getGOAL(){
-        int [][]GOAL = new int[n][n];
-        for (int i = 0; i < n; i++) {
-            for (int j = 0; j < n; j++) {
-                this.GOAL[i][j] = i * n +j +1;
-            }
-        }
-        GOAL[n-1][n-1] = 0;
-        return GOAL;
-    }
 
     // a board that is obtained by exchanging any pair of blocks
     public Board twin(){
