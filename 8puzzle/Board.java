@@ -1,6 +1,9 @@
 import edu.princeton.cs.algs4.StdOut;
+import edu.princeton.cs.algs4.StdRandom;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 /**
  * @author psy
@@ -88,12 +91,53 @@ public class Board {
     }
     // is this board the goal board?
     public boolean isGoal(){
+
         return Arrays.deepEquals(this.grid, GOAL);
     }
+
+    private int[][] getGOAL(){
+        int [][]GOAL = new int[n][n];
+        for (int i = 0; i < n; i++) {
+            for (int j = 0; j < n; j++) {
+                this.GOAL[i][j] = i * n +j +1;
+            }
+        }
+        GOAL[n-1][n-1] = 0;
+        return GOAL;
+    }
+
     // a board that is obtained by exchanging any pair of blocks
     public Board twin(){
-        return null;
+        int[][] newGrid = getGridCopy();
+
+
+        if (grid[0][0] != 0 && grid[0][1] != 0) {
+            swap(newGrid, 0, 0, 0,1 );
+        } else {
+            swap(newGrid, n-1, n-1, n-1, n-2);
+        }
+
+        return new Board(newGrid);
+
+
     }
+
+    private int[][] getGridCopy() {
+        int[][]newGrid = new int[n][n];
+
+        for (int i = 0; i < grid.length; i++) {
+            newGrid[i] = Arrays.copyOf(grid[i], n);
+        }
+        return newGrid;
+    }
+
+    private int[][] swap(int[][] newGrid, int iA, int jA, int iB, int jB) {
+        int tmp = newGrid[iA][jA];
+        newGrid[iA][jA] = newGrid[iB][jB] ;
+        newGrid[iB][jB] = tmp;
+        return newGrid;
+    }
+
     // does this board equal y?
     public boolean equals(Object y){
         if (y instanceof Board) {
@@ -103,7 +147,37 @@ public class Board {
     }
     // all neighboring boards
     public Iterable<Board> neighbors() {
-        return null;
+        List<Board> boardList = new ArrayList<>();
+
+
+        for (int i = 0; i < n ; i++) {
+            for (int j = 0; j < n; j++){
+                if (grid[i][j] == 0) {
+                    if (i> 0 ) {
+                        int[][] tmp = getGridCopy();
+                        boardList.add(new Board(swap(tmp, i, j, i-1, j)));
+                    }
+
+                    if (i + 1 < n) {
+                        int[][] tmp = getGridCopy();
+                        boardList.add(new Board(swap(tmp, i, j, i+1, j)));
+                    }
+
+                    if (j > 0){
+                        int[][] tmp = getGridCopy();
+                        boardList.add(new Board(swap(tmp, i, j, i, j-1)));
+                    }
+
+                    if (j + 1 < n){
+                        int[][] tmp = getGridCopy();
+                        boardList.add(new Board(swap(tmp, i, j, i, j+1)));
+                    }
+                    break;
+                }
+            }
+        }
+
+        return boardList;
     }
     // string representation of this board (in the output format specified below)
     public String toString(){
@@ -122,6 +196,9 @@ public class Board {
         test1();
         test2();
         test3();
+        test4();
+        test5();
+        test6();
     }
 
     private static void test1() {
@@ -140,5 +217,30 @@ public class Board {
         Board n1 = new Board(new int[][]{{8, 1, 3},{4, 0, 2}, {7 ,6, 5}});
         assert n1.hamming() == 5;
         assert n1.manhattan() == 10;
+    }
+
+
+    private static void test4() {
+        int[][] data = {{2, 0, 3, 4}, {1, 10, 6, 8}, {5, 9, 7, 12}, {13, 14, 11, 15}};
+        Board b = new Board(data);
+        assert b.neighbors().spliterator().estimateSize() == 3;
+    }
+
+    private static void test5() {
+        int[][] data = {{2, 0, 3, 4}, {1, 10, 6, 8}, {5, 9, 7, 12}, {13, 14, 11, 15}};
+        int[][] dataTwin = {{2, 0, 3, 4}, {1, 10, 6, 8}, {5, 9, 7, 12}, {13, 14, 15, 11}};
+        Board b = new Board(data);
+        Board twin = new Board(dataTwin);
+
+
+        assert b.twin().equals(twin);
+    }
+
+    private static void test6() {
+        int[][] data = {{2, 3, 0, 4}, {1, 10, 6, 8}, {5, 9, 7, 12}, {13, 14, 11, 15}};
+        int[][] dataTwin = {{3, 2, 0, 4}, {1, 10, 6, 8}, {5, 9, 7, 12}, {13, 14, 11, 15}};
+        Board b = new Board(data);
+        Board twin = new Board(dataTwin);
+        assert b.twin().equals(twin);
     }
 }
